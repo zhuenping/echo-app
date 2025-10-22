@@ -1,0 +1,33 @@
+# python-tests.yml：自动运行Python测试的GitHub Actions工作流
+name: python-tests  # 工作流名称，需与PR检查名一致
+on:  # 触发条件：push或PR到main、dev、staging分支（PDF分支规范）
+  push:
+    branches: ["main", "dev", "staging"]
+  pull_request:
+    branches: ["main", "dev", "staging"]
+permissions:
+  contents: read  # 只读权限，符合安全规范
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # 运行环境：GitHub托管的Ubuntu服务器
+    steps:
+      # 步骤1：拉取远程仓库代码到工作流环境
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 步骤2：设置Python 3.12（与Dockerfile版本一致，）
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+      
+      # 步骤3：安装依赖（pytest+项目依赖）
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # 步骤4：运行pytest测试（执行test_app.py中的用例）
+      - name: Run Python tests
+        run: |
+          pytest tests/test_app.py -v  # -v=详细输出，便于排查失败原因
