@@ -1,0 +1,20 @@
+# docker-build.yml：自动构建Docker镜像的GitHub Actions工作流
+name: docker-build  # 工作流名称，需与PR检查名一致
+on:  # 触发条件：仅PR到main、dev、staging分支（避免不必要的构建）
+  pull_request:
+    branches: ["main", "dev", "staging"]
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤1：拉取远程仓库代码（需Dockerfile和项目文件）
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 步骤2：构建Docker镜像（使用本地Dockerfile）
+      - name: Build Docker image
+        run: |
+          # 构建命令：标签用“仓库名:时间戳”，确保唯一
+          docker build . --file Dockerfile --tag github-workflow-app:$(date +%s)
+          # 验证镜像是否构建成功（查看镜像列表）
+          docker images | grep github-workflow-app
