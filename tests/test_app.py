@@ -1,11 +1,12 @@
 import sys
 import os
-import pytest  # 导入pytest用于异常断言
+import pytest  # 导入pytest用于异常断言（保留必要依赖）
 
-# 将项目根目录加入Python模块搜索路径
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 获取仓库根目录路径（当前测试文件的“上上级”目录，仅需配置一次）
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)  # 将根目录加入模块搜索路径（仅需添加一次）
 
-from app.app import dedupe, add  # 导入被测试的函数
+from app.app import dedupe, add  # 导入被测试的函数（仅需导入一次）
 
 
 # 测试dedupe去重函数
@@ -28,4 +29,5 @@ def test_add_float():
 
 def test_add_invalid_type():
     with pytest.raises(TypeError):
-        add("2", 3), "非数字输入未抛异常，测试失败"
+        add("2", 3)  # 注意：原代码中多余的逗号已移除，避免语法警告
+    # 断言信息可直接写在with语句后或函数注释中，此处简化逻辑
